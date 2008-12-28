@@ -37,7 +37,7 @@ module OAuthProvider
     end
 
     def self.generate_credentials
-      OAuth::Server.new(SERVER_BASE).generate_credentials
+      OAuth::Server.new(nil).generate_credentials
     end
 
     private
