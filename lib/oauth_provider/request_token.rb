@@ -3,11 +3,14 @@ module OAuthProvider
     def initialize(consumer, authorized, shared, secret)
       @consumer, @authorized, @shared, @secret = consumer, authorized, shared, secret
     end
-    attr_reader :authorized
 
     def authorize
       consumer.authorize_request_token(self)
       @authorized = true
+    end
+
+    def authorized?
+      @authorized
     end
 
     def upgrade
