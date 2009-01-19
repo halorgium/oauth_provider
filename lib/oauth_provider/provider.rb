@@ -10,8 +10,12 @@ module OAuthProvider
     end
     attr_reader :backend
 
-    def add_consumer(name, callback)
-      consumer = Consumer.new(self, name, callback, Token.generate)
+    def consumers
+      @backend.all_consumers
+    end
+
+    def add_consumer(callback)
+      consumer = Consumer.new(self, callback, Token.generate)
       @backend.add_consumer(consumer)
       consumer
     end

@@ -8,10 +8,17 @@ module OAuthProvider
         @repository = repository
       end
 
+      def all_consumers
+        with_repository do
+          Consumer.all.map do |c|
+            c.to_oauth(provider)
+          end
+        end
+      end
+
       def add_consumer(consumer)
         with_repository do
-          Consumer.create(:name => consumer.name,
-                          :callback => consumer.callback,
+          Consumer.create(:callback => consumer.callback,
                           :shared_key => consumer.shared_key,
                           :secret_key => consumer.secret_key)
         end

@@ -1,9 +1,9 @@
 module OAuthProvider
   class Consumer
-    def initialize(provider, name, callback, token)
-      @provider, @name, @callback, @token = provider, name, callback, token
+    def initialize(provider, callback, token)
+      @provider, @callback, @token = provider, callback, token
     end
-    attr_reader :provider, :name, :callback, :token
+    attr_reader :provider, :callback, :token
 
     def issue_request
       @provider.add_user_access(self)

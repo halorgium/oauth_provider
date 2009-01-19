@@ -1,0 +1,2 @@
+dependency "rake"
+dependency "oauth"

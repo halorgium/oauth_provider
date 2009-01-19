@@ -5,7 +5,6 @@ module OAuthProvider
         include ::DataMapper::Resource
 
         property :id, Serial
-        property :name, String, :unique => true, :nullable => false
         property :callback, String, :unique => true, :nullable => false
         property :shared_key, String, :unique => true, :nullable => false
         property :secret_key, String, :unique => true, :nullable => false
@@ -18,7 +17,7 @@ module OAuthProvider
         end
 
         def to_oauth(provider)
-          OAuthProvider::Consumer.new(provider, name, callback, token)
+          OAuthProvider::Consumer.new(provider, callback, token)
         end
       end
     end

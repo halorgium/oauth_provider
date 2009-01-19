@@ -1,4 +1,4 @@
-require 'oauth/request_proxy/rack_request'
+require File.dirname(__FILE__) + '/spec_helper'
 
 if ENV["DATAMAPPER"]
   require 'dm-core'
@@ -9,7 +9,7 @@ describe "A Provider" do
   describe "adding a consumer" do
     it "saves the consumer" do
       provider = OAuthProvider.create(:in_memory)
-      consumer = provider.add_consumer("test", "http://testconsumer.example.org/")
+      consumer = provider.add_consumer("http://testconsumer.example.org/")
       provider.consumer_for(consumer.shared_key).should == consumer
     end
   end
@@ -22,7 +22,7 @@ describe "A Provider" do
       else
         @provider = OAuthProvider.create(:in_memory)
       end
-      consumer = @provider.add_consumer("test consumer", "http://testconsumer.example.org/")
+      consumer = @provider.add_consumer("http://testconsumer.example.org/")
       @client = OAuthClient.new(consumer)
     end
 
