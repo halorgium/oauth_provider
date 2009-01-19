@@ -78,7 +78,7 @@ end
 
 desc "Release the version"
 task :release => :package do
-  version = EySsoSlice::VERSION
+  version = OAuthProvider::VERSION
   puts "Releasing #{version}"
 
   `git show-ref tags/v#{version}`
@@ -103,7 +103,7 @@ task :release => :package do
 
   puts "Changing the version to #{next_version}."
 
-  version_file = "#{Merb.root}/lib/#{GEM_NAME}/version.rb"
+  version_file = "#{File.dirname(__FILE__)}/lib/#{GEM_NAME}/version.rb"
   File.open(version_file, "w") do |f|
     f.puts <<-EOT
 module OAuthProvider
