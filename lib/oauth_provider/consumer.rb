@@ -1,17 +1,31 @@
 module OAuthProvider
   class Consumer
-    def initialize(store, name, shared, secret, callback)
-      @store, @name, @shared, @secret, @callback = store, name, shared, secret, callback
-    end
-    attr_reader :name, :shared, :secret, :callback
-
-    def generate_request_token
-      shared, secret = Provider.generate_credentials
-      RequestToken.new(self, false, shared, secret)
+    def self.create(provider, name, callback)
+      new(provider, name, callback).save
     end
 
-    def authorize_request_token(token)
-      @store.authorize_request_token(token)
+    def initialize(provider, name, callback, shared_key = nil, secret_key = nil)
+      @provider, @name, @callback = provider, name, callback
+      @shared_key, @secret_key = shared_key || @provider.generate_shared_key, secret_key || @provider.generate_secret_key
     end
+    attr_reader :provider, :name, :callback, :shared_key, :secret_key
+
+    def issue_token
+      Token.create(self)
+    end
+
+    #def authorize_request_token(token)
+      #@provider.authorize_request_token(token)
+    #end
+
+    def save
+      backend.create_consumer(name, callback, shared_key, secret_key)
+      self
+    end
+
+    private
+      def backend
+        @provider.backend
+      end
   end
 end

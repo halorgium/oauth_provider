@@ -1,14 +1,13 @@
-gem 'sqlite3-ruby'
-require 'sqlite3'
+raise "Sequel backend is incomplete"
+
+gem 'sequel'
+require 'sequel'
 
 module OAuthProvider
-  module Stores
-    class Sqlite3Store
-      def initialize(path)
-        @db = SQLite3::Database.new(path)
-        @db.execute("CREATE TABLE IF NOT EXISTS consumers (name CHAR(50), shared CHAR(32) PRIMARY KEY, secret CHAR(32), callback CHAR(255))")
-        @db.execute("CREATE TABLE IF NOT EXISTS request_tokens (shared CHAR(16) PRIMARY KEY, secret CHAR(32), authorized INT, consumer_shared CHAR(32))")
-        @db.execute("CREATE TABLE IF NOT EXISTS access_tokens (shared CHAR(16) PRIMARY KEY, secret CHAR(32), request_shared CHAR(32), consumer_shared CHAR(32))")
+  module Backends
+    class Sequel
+      def initialize(uri)
+        @db = Sequel.connect(uri)
       end
 
       def save_consumer(consumer)
@@ -54,6 +53,29 @@ module OAuthProvider
         end
         nil
       end
+
+      private
+
+      def create_tables
+        @db.execute("CREATE TABLE IF NOT EXISTS consumers (name CHAR(50), shared CHAR(32) PRIMARY KEY, secret CHAR(32), callback CHAR(255))")
+        @db.execute("CREATE TABLE IF NOT EXISTS request_tokens (shared CHAR(16) PRIMARY KEY, secret CHAR(32), authorized INT, consumer_shared CHAR(32))")
+        @db.execute("CREATE TABLE IF NOT EXISTS access_tokens (shared CHAR(16) PRIMARY KEY, secret CHAR(32), request_shared CHAR(32), consumer_shared CHAR(32))")
+        unless @db.table_exists?(:consumers)
+          @db.create_table :consumers do
+            primary_key :id
+            text :name, :shared, :secret, :callback, :unique => true, :null => false
+            index :shared
+          end
+        end
+
+        unless @db.table_exists?(:request_tokens)
+          primary_key :id
+          text :shared_key, :secret_key, :unique => true, :null => false
+          foreign_key :consumer_id, :consumers
+          index :shared_key, :consumer_id
+          end
+      end
     end
   end
 end
+
