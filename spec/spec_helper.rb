@@ -5,15 +5,36 @@ require 'pp'
 
 require File.dirname(__FILE__) + '/../lib/oauth_provider'
 
+require 'oauth/request_proxy/base'
+
+module OAuth
+  module RequestProxy
+    class MockRequest < OAuth::RequestProxy::Base
+      proxies Hash
+
+      def parameters
+        @request["parameters"]
+      end
+
+      def method
+        @request["method"]
+      end
+
+      def uri
+        @request["uri"]
+      end
+    end
+  end
+end
+
 class OAuthClient
-  def initialize(shared_key, secret_key)
-    @consumer = OAuth::Consumer.new(shared_key, secret_key)
+  def initialize(consumer)
+    @consumer = OAuth::Consumer.new(consumer.shared_key, consumer.secret_key)
   end
   attr_reader :consumer
 
-  def request(token_shared_key = nil)
-    request = Request.new(@consumer, Time.now.to_i, token_shared_key)
-    Rack::Request.new(request.signed_env)
+  def request(token = nil)
+    Request.new(@consumer, Time.now.to_i, token).signed_request
   end
 
   class Request
@@ -23,20 +44,22 @@ class OAuthClient
       @consumer, @timestamp, @nonce, @token = consumer, timestamp, generate_key, token
     end
 
-    def signed_env
-      unsigned_request = Rack::Request.new(env)
-      signature = OAuth::Signature.sign(unsigned_request) do |token|
+    def signed_request
+      r = request
+      r["parameters"]["oauth_signature"] = signature
+      r
+    end
+
+    def signature
+      OAuth::Signature.sign(request) do |token|
         [@token && @token.secret_key, @consumer.secret]
       end
-      env('oauth_signature' => signature)
     end
 
-    def env(extra_hash = {})
-      Rack::MockRequest.env_for("/?#{query_string(extra_hash)}")
-    end
-
-    def query_string(extra_hash = {})
-      query_hash.merge(extra_hash).map {|k,v| "#{escape(k)}=#{escape(v)}"}.join("&")
+    def request
+      {"parameters" => query_hash,
+        "method" => "GET",
+        "uri" => "/"}
     end
 
     def query_hash

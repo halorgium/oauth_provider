@@ -1,7 +1,11 @@
 module OAuthProvider
   module Backends
     class Abstract
-      def create_consumer(name, shared_key, secret_key, callback)
+      class NotImplemented < StandardError; end
+
+      attr_accessor :provider
+
+      def create_consumer(consumer)
         raise NotImplemented, "Implement #create_consumer in #{self.class}"
       end
 
@@ -9,20 +13,24 @@ module OAuthProvider
         raise NotImplemented, "Implement #fetch_consumer in #{self.class}"
       end
 
-      def create_request_token(consumer_shared_key, shared_key, secret_key)
-        raise NotImplemented, "Implement #create_request_token in #{self.class}"
+      def create_user_request(user_request)
+        raise NotImplemented, "Implement #create_user_request in #{self.class}"
       end
 
-      def fetch_request_token(consumer_shared_key, shared_key)
-        raise NotImplemented, "Implement #fetch_request_token in #{self.class}"
+      def fetch_user_request(shared_key)
+        raise NotImplemented, "Implement #fetch_user_request in #{self.class}"
       end
 
-      def create_access_token(consumer_shared_key, request_shared_key, shared_key, secret_key)
-        raise NotImplemented, "Implement #create_access_token in #{self.class}"
+      def update_user_request(user_request, user_access)
+        raise NotImplemented, "Implement #update_user_request in #{self.class}"
       end
 
-      def fetch_access_token(consumer_shared_key, shared_key)
-        raise NotImplemented, "Implement #fetch_access_token in #{self.class}"
+      def create_user_access(user_access)
+        raise NotImplemented, "Implement #create_user_access in #{self.class}"
+      end
+
+      def fetch_user_access(shared_key)
+        raise NotImplemented, "Implement #fetch_user_access in #{self.class}"
       end
     end
   end
