@@ -14,10 +14,6 @@ module OAuthProvider
       Token.create(self)
     end
 
-    #def authorize_request_token(token)
-      #@provider.authorize_request_token(token)
-    #end
-
     def save
       backend.create_consumer(name, callback, shared_key, secret_key)
       self
