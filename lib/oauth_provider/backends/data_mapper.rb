@@ -63,8 +63,9 @@ module OAuthProvider
       def create_user_access(user_access)
         with_repository do
           if consumer = consumer_for(user_access.consumer.shared_key)
-            u = consumer.user_accesses.create(:shared_key => user_access.shared_key,
-                                          :secret_key => user_access.secret_key)
+            u = consumer.user_accesses.create(:request_shared_key => user_access.request_shared_key,
+                                              :shared_key => user_access.shared_key,
+                                              :secret_key => user_access.secret_key)
           else
             raise ConsumerNotFound.new(user_access.consumer.shared_key)
           end

@@ -52,7 +52,7 @@ module OAuthProvider
       end
 
       def add_user_access(user_request, token = Token.generate)
-        user_access = UserAccess.new(self, user_request.consumer, token)
+        user_access = UserAccess.new(self, user_request.consumer, user_request.shared_key, token)
         create_user_access(user_access)
         destroy_user_request(user_request)
         user_access
