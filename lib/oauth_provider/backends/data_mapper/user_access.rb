@@ -15,8 +15,8 @@ module OAuthProvider
           OAuthProvider::Token.new(shared_key, secret_key)
         end
 
-        def to_oauth(provider)
-          OAuthProvider::UserAccess.new(consumer.to_oauth(provider), token)
+        def to_oauth(backend)
+          OAuthProvider::UserAccess.new(backend, consumer.to_oauth(backend), token)
         end
       end
     end

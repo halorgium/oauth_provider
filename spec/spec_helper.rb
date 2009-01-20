@@ -5,6 +5,32 @@ require 'pp'
 
 require File.dirname(__FILE__) + '/../lib/oauth_provider'
 
+if ENV["DATAMAPPER"]
+  require 'dm-core'
+  DataMapper.setup(:default, "sqlite3:///tmp/oauth_provider_test.sqlite3")
+end
+
+module OAuthProviderHelper
+  def create_provider
+    if ENV["DATAMAPPER"]
+      OAuthProvider.create(:data_mapper)
+    else
+      OAuthProvider.create(:in_memory)
+    end
+  end
+end
+
+Spec::Runner.configure do |config|
+  config.include(OAuthProviderHelper)
+
+  config.before(:each) do
+    if ENV["DATAMAPPER"]
+      OAuthProvider.create(:data_mapper)
+      DataMapper.auto_migrate!
+    end
+  end
+end
+
 require 'oauth/request_proxy/base'
 
 module OAuth

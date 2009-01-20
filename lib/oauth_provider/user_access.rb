@@ -1,7 +1,7 @@
 module OAuthProvider
   class UserAccess
-    def initialize(consumer, token)
-      @consumer, @token = consumer, token
+    def initialize(backend, consumer, token)
+      @backend, @consumer, @token = backend, consumer, token
     end
     attr_reader :consumer, :token
 

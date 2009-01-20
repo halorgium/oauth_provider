@@ -1,22 +1,30 @@
 require 'dm-core'
 require 'dm-validations'
 
+module Merb
+  def self.environment
+  end
+  def self.logger=(logger)
+  end
+end
+
 module OAuthProvider
   module Backends
     class DataMapper < Abstract
       def initialize(repository = :default)
         @repository = repository
+        ::DataMapper.logger = Extlib::Logger.new($stdout, 2)
       end
 
-      def all_consumers
+      def consumers
         with_repository do
           Consumer.all.map do |c|
-            c.to_oauth(provider)
+            c.to_oauth(self)
           end
         end
       end
 
-      def add_consumer(consumer)
+      def create_consumer(consumer)
         with_repository do
           Consumer.create(:callback => consumer.callback,
                           :shared_key => consumer.shared_key,
@@ -24,9 +32,14 @@ module OAuthProvider
         end
       end
 
-      def fetch_consumer(shared_key)
+      def find_consumer(shared_key)
         consumer = consumer_for(shared_key)
-        consumer && consumer.to_oauth(provider)
+        consumer && consumer.to_oauth(self)
+      end
+
+      def destroy_consumer(consumer)
+        consumer = consumer_for(consumer.shared_key)
+        consumer && consumer.destroy
       end
 
       def create_user_request(user_request)
@@ -38,16 +51,21 @@ module OAuthProvider
         end
       end
 
-      def fetch_user_request(shared_key)
+      def find_user_request(shared_key)
         user_request = user_request_for(shared_key)
-        user_request && user_request.to_oauth(provider)
+        user_request && user_request.to_oauth(self)
       end
 
-      def update_user_request(user_request, user_access)
-        if u = user_request_for(user_request.shared_key)
-          u.user_access = user_access_for(user_access.shared_key) || raise("Coudlnt fijselfij")
-          u.save || raise("Couldn't save user access")
+      def save_user_request(user_request)
+        if model = user_request_for(user_request.shared_key)
+          model.authorized = user_request.authorized?
+          model.save || raise("Failed to save UserRequest: #{user_request.shared_key}, #{model.errors.inspect}")
         end
+      end
+
+      def destroy_user_request(user_request)
+        user_request = user_request_for(user_request.shared_key)
+        user_request && user_request.destroy
       end
 
       def create_user_access(user_access)
@@ -61,10 +79,10 @@ module OAuthProvider
         end
       end
 
-      def fetch_user_access(shared_key)
+      def find_user_access(shared_key)
         with_repository do
           user_access = UserAccess.first(:shared_key => shared_key)
-          user_access && user_access.to_oauth(provider)
+          user_access && user_access.to_oauth(self)
         end
       end
 

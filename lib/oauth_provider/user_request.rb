@@ -1,12 +1,25 @@
 module OAuthProvider
   class UserRequest
-    def initialize(consumer, token, user_access)
-      @consumer, @token, @user_access = consumer, token, user_access
+    def initialize(backend, consumer, authorized, token)
+      @backend, @consumer, @authorized, @token = backend, consumer, authorized, token
     end
-    attr_reader :consumer, :token, :user_access
+    attr_reader :consumer, :token
+
+    def authorized?
+      @authorized
+    end
 
     def authorize
-      @user_access = @consumer.provider.add_user_access(self)
+      @authorized = true
+      @backend.save_user_request(self)
+    end
+
+    def upgrade
+      if authorized?
+        @backend.add_user_access(self)
+      else
+        raise UserRequestNotAuthorized.new(self)
+      end
     end
 
     def callback

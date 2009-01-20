@@ -7,17 +7,31 @@ require 'oauth/signature'
 
 module OAuthProvider
   class Error < StandardError; end
+  class NotImplemented < Error; end
   class ConsumerNotFound < Error
     def initialize(shared_key)
       super("No Consumer with shared key: #{shared_key.inspect}")
     end
   end
-  class UserRequestNotFound < Error; end
-  class UserAccessNotFound < Error; end
+  class UserRequestNotFound < Error
+    def initialize(shared_key)
+      super("No User Request with shared key: #{shared_key.inspect}")
+    end
+  end
+  class UserAccessNotFound < Error
+    def initialize(shared_key)
+      super("No User Access with shared key: #{shared_key.inspect}")
+    end
+  end
+  class UserRequestNotAuthorized < Error
+    def initialize(user_request)
+      super("The User Request is not yet authorized by the User: #{user_request.shared_key.inspect}")
+    end
+  end
   class VerficationFailed < Error; end
 
-  def self.create(*args)
-    Provider.create(*args)
+  def self.create(backend_type, *args)
+    Backends.for(backend_type, *args).provider
   end
 end
 

@@ -66,10 +66,7 @@ desc 'Default: run spec examples'
 Spec::Rake::SpecTask.new(:default) do |t|
   t.spec_opts << %w(-fs --color)
   t.spec_opts << '--loadby' << 'random'
-  t.spec_files = Dir["#{base_dir}/spec/*_spec.rb"]
-  %w(requests models).collect do |dir|
-    t.spec_files << Dir["#{base_dir}/spec/#{dir}/*_spec.rb"]
-  end
+  t.spec_files = Dir["#{base_dir}/spec/**/*_spec.rb"]
   t.rcov = true
   t.rcov_opts << '--exclude' << 'spec,config,gems'
   t.rcov_opts << '--text-summary'

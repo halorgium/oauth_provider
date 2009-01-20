@@ -16,5 +16,10 @@ module OAuthProvider
     def query_string
       OAuth::Token.new(shared_key, secret_key).to_query
     end
+
+    def ==(token)
+      return false unless token.is_a?(Token)
+      [shared_key, secret_key].eql?([token.shared_key, token.secret_key])
+    end
   end
 end
