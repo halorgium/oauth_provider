@@ -1,19 +1,11 @@
 require 'dm-core'
 require 'dm-validations'
 
-module Merb
-  def self.environment
-  end
-  def self.logger=(logger)
-  end
-end
-
 module OAuthProvider
   module Backends
     class DataMapper < Abstract
       def initialize(repository = :default)
         @repository = repository
-        ::DataMapper.logger = Extlib::Logger.new($stdout, 2)
       end
 
       def consumers
