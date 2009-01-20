@@ -27,4 +27,17 @@ describe "A User Request" do
         should raise_error(OAuthProvider::UserRequestNotAuthorized)
     end
   end
+
+  describe "which has been upgraded" do
+    it "has been destroyed" do
+      provider = create_provider
+      consumer = provider.add_consumer("foo")
+      user_request = consumer.issue_request
+      user_request.authorize
+      user_request.upgrade
+
+      lambda { consumer.find_user_request(user_request.shared_key) }.
+        should raise_error(OAuthProvider::UserRequestNotFound)
+    end
+  end
 end
