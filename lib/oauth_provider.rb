@@ -30,6 +30,12 @@ module OAuthProvider
   end
   class VerficationFailed < Error; end
 
+  class DuplicateCallback < Error
+    def initialize(consumer)
+      super("The callback #{consumer.callback.inspect} is already used by another consumer")
+    end
+  end
+
   def self.create(backend_type, *args)
     Backends.for(backend_type, *args).provider
   end

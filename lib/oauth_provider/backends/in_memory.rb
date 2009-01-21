@@ -7,6 +7,7 @@ module OAuthProvider
       attr_reader :consumers
 
       def create_consumer(consumer)
+        raise DuplicateCallback.new(consumer) if @consumers.any? {|c| c.callback == consumer.callback}
         @consumers << consumer
       end
 

@@ -18,9 +18,11 @@ module OAuthProvider
 
       def create_consumer(consumer)
         with_repository do
-          Consumer.create(:callback => consumer.callback,
-                          :shared_key => consumer.shared_key,
-                          :secret_key => consumer.secret_key)
+          raise DuplicateCallback.new(consumer) if Consumer.first(:callback => consumer.callback)
+          model = Consumer.new(:callback => consumer.callback,
+                               :shared_key => consumer.shared_key,
+                               :secret_key => consumer.secret_key)
+          model.save || raise("Failed to create Consumer: #{model.inspect}, #{model.errors.inspect}")
         end
       end
 

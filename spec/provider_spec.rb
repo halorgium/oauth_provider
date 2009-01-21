@@ -7,9 +7,16 @@ describe "A Provider" do
       consumer = provider.add_consumer("http://testconsumer.example.org/")
       provider.find_consumer(consumer.shared_key).should == consumer
     end
+
+    it "disallows a consumer with the same callback" do
+      provider = create_provider
+      provider.add_consumer("http://testconsumer.example.org/")
+      lambda { provider.add_consumer("http://testconsumer.example.org/") }.
+        should raise_error(OAuthProvider::DuplicateCallback)
+    end
   end
 
-  describe "fetching all the consumers" do
+  describe "all the consumers" do
     it "returns the complete list" do
       provider = create_provider
       one = provider.add_consumer("http://one.com/")
@@ -19,6 +26,15 @@ describe "A Provider" do
   end
 
   describe "deleting a consumer" do
+    it "removes the consumer from the backend" do
+      provider = create_provider
+      one = provider.add_consumer("http://one.com/")
+      provider.destroy_consumer(one)
+      provider.consumers.should be_empty
+    end
+  end
+
+  describe "finding a consumer" do
     it "removes the consumer from the backend" do
       provider = create_provider
       one = provider.add_consumer("http://one.com/")
