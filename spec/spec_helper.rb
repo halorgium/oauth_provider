@@ -4,19 +4,13 @@ require 'rack'
 require 'pp'
 
 require File.dirname(__FILE__) + '/../lib/oauth_provider'
+require File.dirname(__FILE__) + '/helpers/backend_helper'
 
-if ENV["DATAMAPPER"]
-  require 'dm-core'
-  DataMapper.setup(:default, "sqlite3:///tmp/oauth_provider_test.sqlite3")
-end
+OAuthBackendHelper.setup
 
 module OAuthProviderHelper
   def create_provider
-    if ENV["DATAMAPPER"]
-      OAuthProvider.create(:data_mapper)
-    else
-      OAuthProvider.create(:in_memory)
-    end
+    OAuthBackendHelper.provider
   end
 end
 
@@ -24,10 +18,7 @@ Spec::Runner.configure do |config|
   config.include(OAuthProviderHelper)
 
   config.before(:each) do
-    if ENV["DATAMAPPER"]
-      OAuthProvider.create(:data_mapper)
-      DataMapper.auto_migrate!
-    end
+    OAuthBackendHelper.reset
   end
 end
 
