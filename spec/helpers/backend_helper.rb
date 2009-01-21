@@ -1,18 +1,42 @@
+require 'fileutils'
+
 module OAuthBackendHelper
   module InMemory
+    def self.create
+      OAuthProvider.create(:in_memory)
+    end
+
     def self.setup; end
     def self.reset; end
   end
 
   module DataMapper
+    def self.create
+      OAuthProvider.create(:data_mapper)
+    end
+
     def self.setup
       require 'dm-core'
       ::DataMapper.setup(:default, "sqlite3:///tmp/oauth_provider_test.sqlite3")
     end
 
     def self.reset
-      OAuthProvider.create(:data_mapper)
+      create
       ::DataMapper.auto_migrate!
+    end
+  end
+
+  module Sqlite3
+    PATH = "/tmp/oauth_provider_sqlite3_test.sqlite3"
+
+    def self.create
+      OAuthProvider.create(:sqlite3, PATH)
+    end
+
+    def self.setup; end
+
+    def self.reset
+      FileUtils.rm(PATH) rescue nil
     end
   end
 
@@ -25,7 +49,7 @@ module OAuthBackendHelper
   end
 
   def self.provider
-    OAuthProvider.create(backend_name)
+    backend_module.create
   end
 
   def self.backend_module
