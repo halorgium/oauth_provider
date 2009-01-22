@@ -3,22 +3,22 @@ require 'sqlite3'
 
 module OAuthProvider
   module Backends
-    class Sqlite3
+    class Sqlite3 < Abstract
       def initialize(path)
         @db = SQLite3::Database.new(path)
-        @db.execute("CREATE TABLE IF NOT EXISTS consumers (name CHAR(50), shared_key CHAR(32) PRIMARY KEY, secret_key CHAR(32), callback CHAR(255))")
+        @db.execute("CREATE TABLE IF NOT EXISTS consumers (shared_key CHAR(32) PRIMARY KEY, secret_key CHAR(32), callback CHAR(255))")
         @db.execute("CREATE TABLE IF NOT EXISTS request_tokens (shared_key CHAR(16) PRIMARY KEY, secret_key CHAR(32), authorized INT, consumer_shared_key CHAR(32))")
         @db.execute("CREATE TABLE IF NOT EXISTS access_tokens (shared_key CHAR(16) PRIMARY KEY, secret_key CHAR(32), request_shared_key CHAR(32), consumer_shared_key CHAR(32))")
       end
 
-      def save_consumer(consumer)
-        @db.execute("INSERT INTO consumers (name, shared_key, secret_key, callback) " \
-                    "VALUES ('#{consumer.name}', '#{consumer.shared_key}', '#{consumer.secret_key}', '#{consumer.callback}')")
+      def create_consumer(consumer)
+        @db.execute("INSERT INTO consumers (shared_key, secret_key, callback) " \
+                    "VALUES ('#{consumer.shared_key}', '#{consumer.secret_key}', '#{consumer.callback}')")
       end
 
-      def fetch_consumer(shared_key)
-        @db.execute("SELECT name, shared_key, secret_key, callback FROM consumers WHERE shared_key = '#{shared_key}' LIMIT 1") do |row|
-          yield row[0], row[1], row[2], row[3]
+      def find_consumer(shared_key)
+        @db.execute("SELECT callback, shared_key, secret_key FROM consumers WHERE shared_key = '#{shared_key}' LIMIT 1") do |row|
+          return Consumer.new(self, provider, row[0], Token.new(row[1], row[2]))
         end
       end
 
