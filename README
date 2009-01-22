@@ -60,12 +60,16 @@ Now you can issue a request token, this will save the token for later access.
 You need to pass in the raw request object which your web framework uses and 
 require the correct request-proxy. 
 
-Rails (ActionController): 'oauth/request_proxy/action_controller_request'
-XMPP4R: 'oauth/request_proxy/jabber_request'
-Net::HTTP: 'oauth/request_proxy/net_http'
-Sinatra/Merb (Rack): 'oauth/request_proxy/rack_request'
+Rails (ActionController): 
+# require 'oauth/request_proxy/action_controller_request'
+XMPP4R: 
+# require 'oauth/request_proxy/jabber_request'
+Net::HTTP: 
+# require 'oauth/request_proxy/net_http'
+Sinatra/Merb (Rack): 
+# require 'oauth/request_proxy/rack_request'
 
-Once that is required, you can ask the provider to issue a token. 
+Once that file is required, you can ask the provider to issue a token. 
 
 # user_request = provider.issue_request(request)
 
