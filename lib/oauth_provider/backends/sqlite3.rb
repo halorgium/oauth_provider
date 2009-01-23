@@ -1,4 +1,8 @@
-gem 'sqlite3-ruby'
+class Gem::LoadError; end;
+begin
+	gem 'sqlite3-ruby'
+rescue Gem::LoadError
+end
 require 'sqlite3'
 
 module OAuthProvider
@@ -12,8 +16,13 @@ module OAuthProvider
       end
 
       def create_consumer(consumer)
-        @db.execute("INSERT INTO consumers (name, shared_key, secret_key, callback) " \
-                    "VALUES ('#{consumer.name}', '#{consumer.shared_key}', '#{consumer.secret_key}', '#{consumer.callback}')")
+			# XXX: Should come up with a better way to store names than forcing the gem user to hack it in manually.
+			# Also, OAuthProvider::DuplicateCallback is a bit silly... multiple consumers with the same callback may be useful (especially since callbacks are optional.
+			@db.execute("SELECT callback FROM consumers WHERE callback='#{consumer.callback}'") do
+				raise OAuthProvider::DuplicateCallback.new(consumer)
+			end
+			@db.execute("INSERT INTO consumers (name, shared_key, secret_key, callback) " \
+			            "VALUES ('', '#{consumer.shared_key}', '#{consumer.secret_key}', '#{consumer.callback}')")
       end
 
 		def find_consumer(shared_key)
@@ -21,6 +30,14 @@ module OAuthProvider
 				return OAuthProvider::Consumer.new(self, @provider, row[1], OAuthProvider::Token.new(row[2], row[3]))
 			end
 			nil
+		end
+
+		def consumers
+			rtrn = []
+			@db.execute("SELECT name, callback, shared_key, secret_key FROM consumers") do |row|
+				rtrn << OAuthProvider::Consumer.new(self, @provider, row[1], OAuthProvider::Token.new(row[2], row[3]))
+			end
+			rtrn
 		end
 
 		def destroy_consumer(consumer)
@@ -40,11 +57,11 @@ module OAuthProvider
       end
 
 		def save_user_request(user_request)
-			@db.execute("UPDATE request_tokens SET authorized=#{user_request.authorized? ? '1' : '0'} WHERE shared_key='#{user_request.shared_key}' AND secret_key='#{user_requent.secret_key}'")
+			@db.execute("UPDATE request_tokens SET authorized=#{user_request.authorized? ? '1' : '0'} WHERE shared_key='#{user_request.shared_key}' AND secret_key='#{user_request.secret_key}'")
 		end
 
 		def destroy_user_request(user_request)
-			@db.execute("DELETE FROM request_tokens WHERE shared_key='#{user_request.shared_key}' AND secret_key='#{user_requent.secret_key}'")
+			@db.execute("DELETE FROM request_tokens WHERE shared_key='#{user_request.shared_key}' AND secret_key='#{user_request.secret_key}'")
 		end
 
       def create_user_access(token)
