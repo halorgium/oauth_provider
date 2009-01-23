@@ -5,17 +5,13 @@ require 'sqlite3'
 
 module OAuthProvider
   module Stores
-    class Sqlite3Store
+    class Sqlite3Store < OAuthProvider::Backends::Abstract
       def initialize(path)
         @db = SQLite3::Database.new(path)
         @db.execute("CREATE TABLE IF NOT EXISTS consumers (name CHAR(50), shared_key CHAR(32) PRIMARY KEY, secret_key CHAR(32), callback CHAR(255))")
         @db.execute("CREATE TABLE IF NOT EXISTS request_tokens (shared_key CHAR(16) PRIMARY KEY, secret_key CHAR(32), authorized INT, consumer_shared_key CHAR(32))")
         @db.execute("CREATE TABLE IF NOT EXISTS access_tokens (shared_key CHAR(16) PRIMARY KEY, secret_key CHAR(32), request_shared_key CHAR(32), consumer_shared_key CHAR(32))")
       end
-
-		def provider=(v)
-			@provider = v
-		end
 
       def create_consumer(consumer)
         @db.execute("INSERT INTO consumers (name, shared_key, secret_key, callback) " \
