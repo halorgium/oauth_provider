@@ -5,6 +5,22 @@ describe "A Consumer" do
     consumer.issue_request.should_not be_nil
   end
 
+  it "finds the same user request for a shared key" do
+    provider = create_provider
+    consumer = provider.add_consumer("http://foo.com")
+    user_request = consumer.issue_request
+    consumer.find_user_request(user_request.shared_key).should == user_request
+  end
+
+  it "finds the same user access for a shared key" do
+    provider = create_provider
+    consumer = provider.add_consumer("http://foo.com")
+    user_request = consumer.issue_request
+    user_request.authorize
+    user_access = user_request.upgrade
+    consumer.find_user_access(user_access.shared_key).should == user_access
+  end
+
   it "is equal to another consumer when both the callback and token match" do
     provider = create_provider
     token1 = OAuthProvider::Token.new("123", "456")
