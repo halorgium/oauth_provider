@@ -2,6 +2,7 @@ require 'rubygems'
 require 'spec'
 require 'rack'
 require 'pp'
+require 'oauth/helper'
 
 require File.dirname(__FILE__) + '/../lib/oauth_provider'
 require File.dirname(__FILE__) + '/helpers/backend_helper'

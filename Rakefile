@@ -1,9 +1,9 @@
-require 'rake/gempackagetask'
+#require 'rake/gempackagetask'
 
-require 'thor'
+#require 'thor'
 
 require File.dirname(__FILE__) + '/lib/oauth_provider/version'
-require File.dirname(__FILE__) + '/tasks/merb.thor/ops'
+#require File.dirname(__FILE__) + '/tasks/merb.thor/ops'
 
 GEM_NAME = "oauth_provider"
 AUTHOR = "halorgium"
@@ -11,7 +11,7 @@ EMAIL = "tim@spork.in"
 HOMEPAGE = "http://github.com/halorgium/oauth_provider/tree/master"
 SUMMARY = "Oauth provider wrapper"
 GEM_VERSION = OAuthProvider::VERSION
-
+=begin
 spec = Gem::Specification.new do |s|
   s.rubyforge_project = 'oauth_provider'
   s.name = GEM_NAME
@@ -58,6 +58,7 @@ task :gemspec do
     file.puts spec.to_ruby
   end
 end
+=end
 
 require 'spec/rake/spectask'
 
@@ -67,7 +68,7 @@ Spec::Rake::SpecTask.new(:default) do |t|
   t.spec_opts << %w(-fs --color)
   t.spec_opts << '--loadby' << 'random'
   t.spec_files = Dir["#{base_dir}/spec/**/*_spec.rb"]
-  t.rcov = true
+  t.rcov = false
   t.rcov_opts << '--exclude' << 'spec,config,gems'
   t.rcov_opts << '--text-summary'
   t.rcov_opts << '--sort' << 'coverage' << '--sort-reverse'

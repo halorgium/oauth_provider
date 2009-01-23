@@ -13,48 +13,54 @@ module OAuthProvider
         @db.execute("CREATE TABLE IF NOT EXISTS access_tokens (shared_key CHAR(16) PRIMARY KEY, secret_key CHAR(32), request_shared_key CHAR(32), consumer_shared_key CHAR(32))")
       end
 
-		def provider=(v);
-			#DUMMY
+		def provider=(v)
+			@provider = v
 		end
 
-      def save_consumer(consumer)
+      def create_consumer(consumer)
         @db.execute("INSERT INTO consumers (name, shared_key, secret_key, callback) " \
                     "VALUES ('#{consumer.name}', '#{consumer.shared_key}', '#{consumer.secret_key}', '#{consumer.callback}')")
       end
 
-      def fetch_consumer(shared_key)
-        @db.execute("SELECT name, shared_key, secret_key, callback FROM consumers WHERE shared_key = '#{shared_key}' LIMIT 1") do |row|
-          yield row[0], row[1], row[2], row[3]
-        end
-      end
+		def find_consumer(shared_key)
+			@db.execute("SELECT name, callback, shared_key, secret_key FROM consumers WHERE shared_key='#{shared_key}' LIMIT 1") do |row|
+				return OAuthProvider::Consumer.new(self, @provider, row[1], OAuthProvider::Token.new(row[2], row[3]))
+			end
+			nil
+		end
 
-      def save_request_token(token)
+		def destroy_consumer(consumer)
+			@db.execute("DELETE FROM consumers WHERE shared_key='#{consumer.shared_key}' AND secret_key='#{consumer.secret_key}'")
+		end
+
+      def create_user_request(token)
         @db.execute("INSERT INTO request_tokens (shared_key, secret_key, authorized, consumer_shared_key) " \
-                    "VALUES ('#{token.shared_key}','#{token.secret_key}',#{token.authorized? ? 1 : 0},'#{token.consumer_shared_key}')")
+                    "VALUES ('#{token.shared_key}','#{token.secret_key}',#{token.authorized? ? 1 : 0},'#{token.consumer.shared_key}')")
       end
 
-      def fetch_request_token(shared_key, consumer_shared_key)
-        consumer_shared_key = "AND consumer_shared_key='#{consumer_shared_key}'" if consumer_shared_key
-        @db.execute("SELECT shared_key, secret_key, authorized, consumer_shared_key FROM request_tokens WHERE shared_key = '#{shared_key}' #{consumer_shared_key} LIMIT 1") do |row|
-          yield row[2], row[0], row[1]
+      def find_user_request(shared_key)
+        @db.execute("SELECT shared_key, secret_key, authorized, consumer_shared_key FROM request_tokens WHERE shared_key = '#{shared_key}' LIMIT 1") do |row|
+          return OAuthProvider::UserRequest.new(self, self.find_consumer(row[3]), row[2].to_i!=0, OAuthProvider::Token.new(row[0], row[1]))
         end
         nil
       end
 
-      def authorize_request_token(token)
-        @db.execute("UPDATE request_tokens SET authorized=1 WHERE shared_key='#{token.shared_key}'")
-      end
+		def save_user_request(user_request)
+			@db.execute("UPDATE request_tokens SET authorized=#{user_request.authorized? ? '1' : '0'} WHERE shared_key='#{user_request.shared_key}' AND secret_key='#{user_requent.secret_key}'")
+		end
 
-      def save_access_token(token)
+		def destroy_user_request(user_request)
+			@db.execute("DELETE FROM request_tokens WHERE shared_key='#{user_request.shared_key}' AND secret_key='#{user_requent.secret_key}'")
+		end
+
+      def create_user_access(token)
         @db.execute("INSERT INTO access_tokens (shared_key, secret_key, consumer_shared_key, request_shared_key) " \
-                    "VALUES ('#{token.shared_key}','#{token.secret_key}','#{token.consumer_shared_key}', '#{token.request_shared_key}')")
+                    "VALUES ('#{token.shared_key}','#{token.secret_key}','#{token.consumer.shared_key}', '#{token.request_shared_key}')")
       end
 
-      def fetch_access_token(shared_key, consumer_shared_key)
-        consumer_shared_key = "AND consumer_shared_key='#{consumer_shared_key}'" if consumer_shared_key
-        @db.execute("SELECT shared_key, secret_key, request_shared_key, consumer_shared_key FROM access_tokens WHERE shared_key = '#{shared_key}' #{consumer_shared_key} LIMIT 1") do |row|
-          consumer = fetch_consumer(row[3])
-          return AccessToken.new(consumer, row[2], row[0], row[1])
+      def find_user_access(shared_key)
+        @db.execute("SELECT shared_key, secret_key, request_shared_key, consumer_shared_key FROM access_tokens WHERE shared_key = '#{shared_key}' LIMIT 1") do |row|
+          return OAuthProvider::UserRequest.new(self, self.find_consumer(row[3]), true, OAuthProvider::Token.new(row[0], row[1]))
         end
         nil
       end
