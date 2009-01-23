@@ -1,11 +1,9 @@
-#raise "Sequel backend is incomplete"
-
-#gem 'sqlite3-ruby'
+gem 'sqlite3-ruby'
 require 'sqlite3'
 
 module OAuthProvider
-  module Stores
-    class Sqlite3Store < OAuthProvider::Backends::Abstract
+  module Backends
+    class Sqlite3 < OAuthProvider::Backends::Abstract
       def initialize(path)
         @db = SQLite3::Database.new(path)
         @db.execute("CREATE TABLE IF NOT EXISTS consumers (name CHAR(50), shared_key CHAR(32) PRIMARY KEY, secret_key CHAR(32), callback CHAR(255))")
