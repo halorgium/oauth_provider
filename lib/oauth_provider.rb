@@ -1,8 +1,7 @@
-require 'rubygems'
-gem 'oauth'
+begin; require 'rubygems'; rescue LoadError; end
 
 require 'oauth'
-require 'oauth/server'
+#require 'oauth/server'
 require 'oauth/signature'
 
 module OAuthProvider

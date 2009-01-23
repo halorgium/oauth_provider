@@ -1,4 +1,6 @@
-gem 'sqlite3-ruby'
+#raise "Sequel backend is incomplete"
+
+#gem 'sqlite3-ruby'
 require 'sqlite3'
 
 module OAuthProvider
@@ -15,6 +17,14 @@ module OAuthProvider
         @db.execute("INSERT INTO consumers (shared_key, secret_key, callback) " \
                     "VALUES ('#{consumer.shared_key}', '#{consumer.secret_key}', '#{consumer.callback}')")
       end
+
+		def provider=(v);
+			#DUMMY
+		end
+
+		def provider=(v);
+			#DUMMY
+		end
 
       def find_consumer(shared_key)
         @db.execute("SELECT callback, shared_key, secret_key FROM consumers WHERE shared_key = '#{shared_key}' LIMIT 1") do |row|
