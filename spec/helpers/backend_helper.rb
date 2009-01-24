@@ -27,7 +27,7 @@ module OAuthBackendHelper
   end
 
   module Sqlite3
-    PATH = "/tmp/oauth_provider_sqlite3_test.sqlite3"
+    PATH = "/tmp/oauth_provider_sqlite3_test.sqlite3" unless defined?(PATH)
 
     def self.create
       OAuthProvider.create(:sqlite3, PATH)
