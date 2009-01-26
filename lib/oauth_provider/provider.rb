@@ -3,6 +3,7 @@ module OAuthProvider
     def initialize(backend)
       @backend = backend
     end
+	 attr_reader :backend
 
     # Request verification
 
