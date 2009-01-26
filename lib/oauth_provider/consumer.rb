@@ -28,6 +28,7 @@ module OAuthProvider
     end
 
     def ==(consumer)
+      return false unless consumer.is_a?(Consumer)
       [callback, token] == [consumer.callback, consumer.token]
     end
   end

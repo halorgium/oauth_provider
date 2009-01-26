@@ -37,5 +37,10 @@ module OAuthProvider
     def secret_key
       @token.secret_key
     end
+
+    def ==(user_request)
+      return false unless user_request.is_a?(UserRequest)
+      [consumer, authorized?, token] == [user_request.consumer, user_request.authorized?, user_request.token]
+    end
   end
 end
