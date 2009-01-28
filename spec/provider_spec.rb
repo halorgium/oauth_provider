@@ -14,6 +14,15 @@ describe "A Provider" do
       lambda { provider.add_consumer("http://testconsumer.example.org/") }.
         should raise_error(OAuthProvider::DuplicateCallback)
     end
+
+    describe "with a custom token" do
+      it "uses the token" do
+        provider = create_provider
+        consumer = provider.add_consumer("http://testconsumer.example.org/", OAuthProvider::Token.new("shared key", "secret key"))
+        provider.find_consumer("shared key").should == consumer
+        consumer.secret_key.should == "secret key"
+      end
+    end
   end
 
   describe "all the consumers" do

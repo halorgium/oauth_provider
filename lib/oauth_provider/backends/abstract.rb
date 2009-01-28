@@ -5,7 +5,7 @@ module OAuthProvider
         @provider ||= Provider.new(self)
       end
 
-      def add_consumer(provider, callback, token = Token.generate)
+      def add_consumer(provider, callback, token)
         consumer = Consumer.new(self, provider, callback, token)
         create_consumer(consumer)
         consumer
@@ -28,7 +28,7 @@ module OAuthProvider
         raise NotImplemented, "Implement #destroy_consumer in #{self.class}"
       end
 
-      def add_user_request(consumer, authorized = false, token = Token.generate)
+      def add_user_request(consumer, authorized, token)
         user_request = UserRequest.new(self, consumer, authorized, token)
         create_user_request(user_request)
         user_request
@@ -51,7 +51,7 @@ module OAuthProvider
         raise NotImplemented, "Implement #destroy_user_request in #{self.class}"
       end
 
-      def add_user_access(user_request, token = Token.generate)
+      def add_user_access(user_request, token)
         user_access = UserAccess.new(self, user_request.consumer, user_request.shared_key, token)
         create_user_access(user_access)
         destroy_user_request(user_request)

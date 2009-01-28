@@ -14,9 +14,9 @@ module OAuthProvider
       @backend.save_user_request(self)
     end
 
-    def upgrade
+    def upgrade(token = nil)
       if authorized?
-        @backend.add_user_access(self)
+        @backend.add_user_access(self, token || Token.generate)
       else
         raise UserRequestNotAuthorized.new(self)
       end

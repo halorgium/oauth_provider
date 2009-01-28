@@ -40,7 +40,8 @@ module OAuthProvider
         with_repository do
           if consumer = consumer_for(user_request.consumer.shared_key)
             consumer.user_requests.create(:shared_key => user_request.shared_key,
-                                          :secret_key => user_request.secret_key)
+                                          :secret_key => user_request.secret_key,
+                                          :authorized => user_request.authorized?)
           end
         end
       end

@@ -14,7 +14,16 @@ describe "A User Request" do
       user_request = consumer.issue_request
       user_request.authorize
       user_access = user_request.upgrade
-      user_access.should_not be_nil
+      consumer.find_user_access(user_access.shared_key).should == user_access
+    end
+
+    it "can be upgraded with a custom token" do
+      provider = create_provider
+      consumer = provider.add_consumer("foo")
+      user_request = consumer.issue_request(true)
+      user_access = user_request.upgrade(OAuthProvider::Token.new("shared key", "secret key"))
+      user_access.shared_key.should == "shared key"
+      user_access.secret_key.should == "secret key"
     end
   end
 

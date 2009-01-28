@@ -1,15 +1,39 @@
 describe "A Consumer" do
-  it "issues the user request" do
-    provider = create_provider
-    consumer = provider.add_consumer("http://foo.com")
-    consumer.issue_request.should_not be_nil
-  end
+  describe "issuing a user request" do
+    it "saves the request" do
+      provider = create_provider
+      consumer = provider.add_consumer("http://foo.com")
+      user_request = consumer.issue_request
+      consumer.find_user_request(user_request.shared_key).should == user_request
+    end
 
-  it "finds the same user request for a shared key" do
-    provider = create_provider
-    consumer = provider.add_consumer("http://foo.com")
-    user_request = consumer.issue_request
-    consumer.find_user_request(user_request.shared_key).should == user_request
+    describe "specifying that it is already authorized" do
+      it "is authorized" do
+        provider = create_provider
+        consumer = provider.add_consumer("http://foo.com")
+        user_request = consumer.issue_request(true)
+        consumer.find_user_request(user_request.shared_key).should be_authorized
+      end
+    end
+
+    describe "specifying that it is not authorized" do
+      it "is not authorized" do
+        provider = create_provider
+        consumer = provider.add_consumer("http://foo.com")
+        user_request = consumer.issue_request(false)
+        consumer.find_user_request(user_request.shared_key).should_not be_authorized
+      end
+    end
+
+    describe "with a custom token" do
+      it "uses the provided token" do
+        provider = create_provider
+        consumer = provider.add_consumer("http://foo.com")
+        user_request = consumer.issue_request(false, OAuthProvider::Token.new("shared key", "secret key"))
+        consumer.find_user_request("shared key").should == user_request
+        user_request.secret_key.should == "secret key"
+      end
+    end
   end
 
   it "finds the same user access for a shared key" do

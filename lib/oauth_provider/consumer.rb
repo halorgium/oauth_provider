@@ -15,8 +15,8 @@ module OAuthProvider
         raise(UserAccessNotFound.new(shared_key))
     end
 
-    def issue_request
-      @backend.add_user_request(self)
+    def issue_request(authorized = false, token = nil)
+      @backend.add_user_request(self, authorized, token || Token.generate)
     end
 
     def shared_key

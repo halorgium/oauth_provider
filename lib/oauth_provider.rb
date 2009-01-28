@@ -26,6 +26,7 @@ module OAuthProvider
     end
   end
   class VerficationFailed < Error; end
+  class IncompleteToken < Error; end
 
   class DuplicateCallback < Error
     def initialize(consumer)

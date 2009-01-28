@@ -21,6 +21,7 @@ end
 task :integration do
   %w( in_memory data_mapper sqlite3 ).each do |backend|
     ENV["BACKEND"] = backend
+    puts "Running specs with #{backend} backend..."
     system("spec", "-O", "spec/spec.opts", "spec")
   end
 end
