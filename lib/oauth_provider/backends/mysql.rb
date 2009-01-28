@@ -13,9 +13,9 @@ module OAuthProvider
 		  @db.reconnect = true
 		  @db.real_query("SET NAMES 'UTF8'")
 		  # FIXME: The key column widths are perhaps not right. What is the max width of each?
-        @db.real_query("CREATE TABLE IF NOT EXISTS consumers (name CHAR(50), shared_key CHAR(64) PRIMARY KEY, secret_key CHAR(64), callback CHAR(255))")
-        @db.real_query("CREATE TABLE IF NOT EXISTS request_tokens (shared_key CHAR(32) PRIMARY KEY, secret_key CHAR(64), authorized INT, consumer_shared_key CHAR(64))")
-        @db.real_query("CREATE TABLE IF NOT EXISTS access_tokens (shared_key CHAR(32) PRIMARY KEY, secret_key CHAR(64), request_shared_key CHAR(64), consumer_shared_key CHAR(64))")
+        @db.real_query("CREATE TABLE IF NOT EXISTS consumers (name CHAR(50), shared_key CHAR(43) PRIMARY KEY, secret_key CHAR(43), callback CHAR(255))")
+        @db.real_query("CREATE TABLE IF NOT EXISTS request_tokens (shared_key CHAR(22) PRIMARY KEY, secret_key CHAR(43), authorized INT, consumer_shared_key CHAR(43))")
+        @db.real_query("CREATE TABLE IF NOT EXISTS access_tokens (shared_key CHAR(22) PRIMARY KEY, secret_key CHAR(43), request_shared_key CHAR(43), consumer_shared_key CHAR(43))")
       end
 
 		def clear!

@@ -5,9 +5,9 @@ module OAuthProvider
     class Sqlite3 < Abstract
       def initialize(path)
         @db = SQLite3::Database.new(path)
-        @db.execute("CREATE TABLE IF NOT EXISTS consumers (name CHAR(50), shared_key CHAR(64) PRIMARY KEY, secret_key CHAR(64), callback CHAR(255))")
-        @db.execute("CREATE TABLE IF NOT EXISTS request_tokens (shared_key CHAR(32) PRIMARY KEY, secret_key CHAR(64), authorized INT, consumer_shared_key CHAR(64))")
-        @db.execute("CREATE TABLE IF NOT EXISTS access_tokens (shared_key CHAR(32) PRIMARY KEY, secret_key CHAR(64), request_shared_key CHAR(64), consumer_shared_key CHAR(64))")
+        @db.execute("CREATE TABLE IF NOT EXISTS consumers (name CHAR(50), shared_key CHAR(43) PRIMARY KEY, secret_key CHAR(43), callback CHAR(255))")
+        @db.execute("CREATE TABLE IF NOT EXISTS request_tokens (shared_key CHAR(22) PRIMARY KEY, secret_key CHAR(43), authorized INT, consumer_shared_key CHAR(43))")
+        @db.execute("CREATE TABLE IF NOT EXISTS access_tokens (shared_key CHAR(22) PRIMARY KEY, secret_key CHAR(43), request_shared_key CHAR(43), consumer_shared_key CHAR(43))")
       end
 
       def create_consumer(consumer)
