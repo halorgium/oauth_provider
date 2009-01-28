@@ -40,6 +40,19 @@ module OAuthBackendHelper
     end
   end
 
+  module Mysql
+    def self.create
+      OAuthProvider.create(:mysql, ENV['MYSQL_HOST'], ENV['MYSQL_USER'], ENV['MYSQL_PASSWORD'], ENV['MYSQL_DB'], ENV['MYSQL_PORT'])
+    end
+
+    def self.setup; end
+
+    def self.reset
+    	self.create.backend.clear!
+    end
+  end
+
+
   def self.setup
     backend_module.setup
   end
