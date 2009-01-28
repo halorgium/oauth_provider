@@ -42,13 +42,18 @@ module OAuthBackendHelper
 
   module Mysql
     def self.create
-      OAuthProvider.create(:mysql, ENV['MYSQL_HOST'], ENV['MYSQL_USER'], ENV['MYSQL_PASSWORD'], ENV['MYSQL_DB'], ENV['MYSQL_PORT'])
+      host      = ENV['MYSQL_HOST'] || "localhost"
+      user      = ENV['MYSQL_USER'] || "root"
+      password  = ENV['MYSQL_PASSWORD'] || ""
+      db        = ENV['MYSQL_DB'] || "oauth_provider_test"
+      port      = ENV['MYSQL_PORT'] || 3306
+      OAuthProvider.create(:mysql, host, user, password, db, port)
     end
 
     def self.setup; end
 
     def self.reset
-    	self.create.backend.clear!
+      self.create.backend.clear!
     end
   end
 

@@ -77,7 +77,7 @@ class OAuthClient
     def request
       {"parameters" => query_hash,
         "method" => "GET",
-        "uri" => "/"}
+        "uri" => "http://example.org/"}
     end
 
     def query_hash
