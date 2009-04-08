@@ -36,6 +36,15 @@ describe "A Consumer" do
     end
   end
 
+  it "can destroy a user request" do
+    provider = create_provider
+    consumer = provider.add_consumer("http://foo.com")
+    user_request = consumer.issue_request
+    consumer.find_user_request(user_request.shared_key).should == user_request
+    consumer.destroy_user_request(user_request).should be_true
+    lambda {consumer.find_user_request(user_request)}.should raise_error(OAuthProvider::UserRequestNotFound)
+  end
+
   it "finds the same user access for a shared key" do
     provider = create_provider
     consumer = provider.add_consumer("http://foo.com")

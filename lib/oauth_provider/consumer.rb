@@ -10,6 +10,11 @@ module OAuthProvider
         raise(UserRequestNotFound.new(shared_key))
     end
 
+    def destroy_user_request(shared_key)
+      @backend.destroy_user_request(shared_key) ||
+        raise(UserRequestNotFound.new(shared_key))
+    end
+
     def find_user_access(shared_key)
       @backend.find_user_access(shared_key) ||
         raise(UserAccessNotFound.new(shared_key))
