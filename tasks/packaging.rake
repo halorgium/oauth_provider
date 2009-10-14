@@ -80,8 +80,8 @@ task :release => :package do
   system("git", "checkout", "master")
   system("git", "branch", "-d", "releasing")
 
-  ints = Gem::Version.new(version).ints << 0
-  next_version = Gem::Version.new(ints.join(".")).bump
+  current = version.to_s + ".0"
+  next_version = Gem::Version.new(current).bump
 
   puts "Changing the version to #{next_version}."
 
