@@ -12,7 +12,7 @@ Spec::Rake::SpecTask.new(:default) do |t|
   t.spec_opts << %w(-fs --color)
   t.spec_opts << '--loadby' << 'random'
   t.spec_files = Dir["#{base_dir}/spec/**/*_spec.rb"]
-  t.rcov = false
+  t.rcov = ENV["RCOV"] == "true"
   t.rcov_opts << '--exclude' << 'spec,config,gems'
   t.rcov_opts << '--text-summary'
   t.rcov_opts << '--sort' << 'coverage' << '--sort-reverse'

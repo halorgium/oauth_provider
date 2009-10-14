@@ -34,7 +34,7 @@ spec = Gem::Specification.new do |s|
     end
   end
   s.require_path = 'lib'
-  s.files = %w(Rakefile) + Dir.glob("{lib,config,spec}/**/*")
+  s.files = Dir.glob("lib/**/*.rb")
 end
 
 Rake::GemPackageTask.new(spec) do |pkg|
