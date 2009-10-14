@@ -10,7 +10,7 @@ module OAuthProvider
         property :shared_key, String, :unique => true, :nullable => false
         property :secret_key, String, :unique => true, :nullable => false
 
-        belongs_to :consumer
+        belongs_to :consumer , :class_name => '::OAuthProvider::Backends::DataMapper::Consumer'
 
         def token
           OAuthProvider::Token.new(shared_key, secret_key)
