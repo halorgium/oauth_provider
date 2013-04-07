@@ -72,6 +72,7 @@ module OAuthProvider
 
       def destroy_user_request(user_request)
         @db.real_query("DELETE FROM request_tokens WHERE shared_key='#{user_request.shared_key}' AND secret_key='#{user_request.secret_key}'")
+        true
       end
 
       def create_user_access(token)

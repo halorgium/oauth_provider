@@ -42,7 +42,7 @@ describe "A Consumer" do
     user_request = consumer.issue_request
     consumer.find_user_request(user_request.shared_key).should == user_request
     consumer.destroy_user_request(user_request).should be_true
-    lambda {consumer.find_user_request(user_request)}.should raise_error(OAuthProvider::UserRequestNotFound)
+    lambda {consumer.find_user_request(user_request.shared_key)}.should raise_error(OAuthProvider::UserRequestNotFound)
   end
 
   it "finds the same user access for a shared key" do

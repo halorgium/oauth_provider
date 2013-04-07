@@ -1,4 +1,2 @@
-gems
-bin
 coverage
-pkg
+Gemfile.lock
