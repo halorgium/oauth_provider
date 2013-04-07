@@ -57,6 +57,17 @@ module OAuthBackendHelper
     end
   end
 
+  module Mongodb
+    def self.create
+      OAuthProvider.create(:mongodb)
+    end
+
+    def self.setup; end
+
+    def self.reset
+      self.create.backend.clear!
+    end
+  end
 
   def self.setup
     backend_module.setup

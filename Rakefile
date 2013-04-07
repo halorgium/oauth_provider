@@ -19,7 +19,7 @@ Spec::Rake::SpecTask.new(:default) do |t|
 end
 
 task :integration do
-  %w( in_memory data_mapper sqlite3 mysql ).each do |backend|
+  %w( in_memory data_mapper sqlite3 mysql mongodb ).each do |backend|
     ENV["BACKEND"] = backend
     puts "Running specs with #{backend} backend..."
     sh("spec", "-O", "spec/spec.opts", "spec")
