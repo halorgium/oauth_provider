@@ -115,12 +115,13 @@ module OAuthProvider
       end
 
       def find_user_access(shared_key)
-        access_token = @access_tokens.find_one({"shared_key" => shared_key})
-        return OAuthProvider::UserAccess.new(self, 
+        if access_token = @access_tokens.find_one({"shared_key" => shared_key})
+          return OAuthProvider::UserAccess.new(self, 
             self.find_consumer(access_token["consumer_shared_key"]), 
             access_token["request_shared_key"],
             OAuthProvider::Token.new(access_token["shared_key"], 
                 access_token["secret_key"]))
+        end
         nil
       end
 
