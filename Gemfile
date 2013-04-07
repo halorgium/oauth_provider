@@ -15,4 +15,5 @@ group :integration do
   gem "dm-validations", "0.9.11"
   gem "do_sqlite3"
   gem "mongodb"
+  gem "bson_ext"
 end
