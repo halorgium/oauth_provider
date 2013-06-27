@@ -109,9 +109,9 @@ should display the consumer information to the user.
 An example ERB view might be: 
 
 ``` erb
-<p>You are about to authorize <%= token.consumer.name %> to access your account %></p>
+<p>You are about to authorize <%= token.consumer.name %> to access your account. </p>
 <p>Do you want this to happen?</p>
-<p><a href="/authorize?oauth_token=<%= token.shared_key %>Authorize it</a>
+<p><a href="/authorize?oauth_token=<%= token.shared_key %>">Authorize it</a></p>
 ```
 
 At this point, you can also store any access control information to allow this 
